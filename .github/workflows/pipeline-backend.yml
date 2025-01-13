@@ -90,6 +90,7 @@ jobs:
           platforms: linux/amd64
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/test:${{ steps.extract_version.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/test:latest
           build-args: |
             PROFILE=prod
             APP_VERSION=${{ steps.extract_version.outputs.VERSION }}
@@ -115,7 +116,7 @@ jobs:
       - name: Create .env file
         run: |
           echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > .env
-          echo "APP_VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> .env
+          echo "APP_VERSION=${{ steps.extract_version.outputs.VERSION }}" >> .env
           sshpass -p "${{ secrets.VPS_PASSWORD }}" scp -o StrictHostKeyChecking=no .env ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/.env
 
       - name: Copy docker-compose file
