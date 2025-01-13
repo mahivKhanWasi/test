@@ -2,6 +2,6 @@ version: "3"
 services:
   test:
     container_name: test_container
-    image: test/test:0.0.1
+    image: mahivkhanwasi/test:0.0.1
     ports:
       - 6969:6969
