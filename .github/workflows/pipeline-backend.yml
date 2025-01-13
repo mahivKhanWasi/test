@@ -17,6 +17,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fix mvnw permissions
+        run: chmod +x ./mvnw
+
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
@@ -24,8 +27,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Compile Project
-        run: |
-          ./mvnw clean compile
+        run: ./mvnw clean compile
 
   build:
     runs-on: ubuntu-latest
@@ -37,6 +39,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fix mvnw permissions
+        run: chmod +x ./mvnw
+
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
@@ -44,8 +49,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Build Project
-        run: |
-          ./mvnw clean package
+        run: ./mvnw clean package
 
   build-image:
     name: Build Docker image
@@ -57,6 +61,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fix mvnw permissions
+        run: chmod +x ./mvnw
+
       - name: Setup JDK
         uses: actions/setup-java@v3
         with:
@@ -64,8 +71,7 @@ jobs:
           distribution: 'corretto'
 
       - name: Build Project
-        run: |
-          ./mvnw clean package
+        run: ./mvnw clean package
 
       - name: Extract project version
         id: extract_version
