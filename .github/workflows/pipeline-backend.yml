@@ -110,13 +110,17 @@ jobs:
       - name: Ensure docker-compose is installed
         run: |
           sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} << EOF
-          sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
+          echo "${{ secrets.VPS_PASSWORD }}" | sudo -S apt-get update
+          echo "${{ secrets.VPS_PASSWORD }}" | sudo -S apt-get install -y docker-compose-plugin
           EOF
 
-      - name: Create deployment folder
+      - name: Check and Create Deployment Folder
         run: |
-          sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "mkdir -p ci-cd"
+          sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "
+          if [ ! -d 'ci-cd' ]; then
+            mkdir -p ci-cd;
+          fi
+          "
 
       - name: Copy docker-compose file
         run: |
@@ -129,3 +133,4 @@ jobs:
           docker compose pull -q
           docker compose up -d
           EOF
+  
