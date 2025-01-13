@@ -61,18 +61,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fix mvnw permissions
-        run: chmod +x ./mvnw
-
-      - name: Setup JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: 'corretto'
-
-      - name: Build Project
-        run: ./mvnw clean package
-
       - name: Extract project version
         id: extract_version
         run: |
@@ -114,13 +102,11 @@ jobs:
           echo "${{ secrets.VPS_PASSWORD }}" | sudo -S apt-get install -y docker-compose-plugin
           EOF
 
-      - name: Check and Create Deployment Folder
+      - name: Create .env file
         run: |
-          sshpass -p "${{ secrets.VPS_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }} "
-          if [ ! -d 'ci-cd' ]; then
-            mkdir -p ci-cd;
-          fi
-          "
+          echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > .env
+          echo "APP_VERSION=$(./mvnw -q -Dexec.executable='echo' -Dexec.args='${project.version}' --non-recursive exec:exec)" >> .env
+          sshpass -p "${{ secrets.VPS_PASSWORD }}" scp -o StrictHostKeyChecking=no .env ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_IP }}:ci-cd/.env
 
       - name: Copy docker-compose file
         run: |
