@@ -1,7 +1,13 @@
-version: "3"
+version: "3.8"
 services:
   test:
     container_name: test_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROFILE: prod
+        APP_VERSION: 0.0.1
     image: mahivkhanwasi/test:0.0.1
     ports:
-      - 6969:6969
+      - "6969:6969"
